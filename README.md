@@ -140,7 +140,7 @@ export const ACCOUNT_LIST: IAccount[] = [
 ### 3. รันโปรเจกต์
 
 ```bash
-npm start
+npm run start
 ```
 
 ### 4. Build สำหรับ Production
