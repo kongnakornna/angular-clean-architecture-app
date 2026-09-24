@@ -1,0 +1,70 @@
+<div class="page-header d-print-none mb-3">
+  <div class="row g-2 align-items-center">
+    <div class="col">
+      <h2 class="page-title">{{ 'schedule.report.title' | translate }}</h2>
+    </div>
+  </div>
+</div>
+
+<div class="card mb-3">
+  <div class="card-body border-bottom py-3">
+    <div class="row g-2">
+      <div class="col-md-3">
+        <label class="form-label">{{ 'schedule.report.scheduleName' | translate }}</label>
+        <select class="form-select" [(ngModel)]="scheduleFilter">
+          <option value="">{{ 'schedule.report.allSchedules' | translate }}</option>
+          <option *ngFor="let s of schedules" [value]="s.id">{{ s.name }}</option>
+        </select>
+      </div>
+      <div class="col-md-2">
+        <label class="form-label">{{ 'schedule.report.fromDate' | translate }}</label>
+        <input type="date" class="form-control" [(ngModel)]="fromDate">
+      </div>
+      <div class="col-md-2">
+        <label class="form-label">{{ 'schedule.report.toDate' | translate }}</label>
+        <input type="date" class="form-control" [(ngModel)]="toDate">
+      </div>
+      <div class="col-md-3 d-flex align-items-end gap-2">
+        <button class="btn btn-primary" (click)="search()">{{ 'schedule.report.search' | translate }}</button>
+        <button class="btn btn-outline-secondary" (click)="reset()">{{ 'schedule.report.reset' | translate }}</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="card">
+  <div *ngIf="loading" class="text-center py-5"><div class="spinner-border text-primary"></div></div>
+  <div *ngIf="!loading" class="table-responsive">
+    <table class="table table-vcenter card-table">
+      <thead>
+        <tr>
+          <th>{{ 'schedule.report.name' | translate }}</th>
+          <th>{{ 'schedule.report.mode' | translate }}</th>
+          <th>{{ 'schedule.report.totalRuns' | translate }}</th>
+          <th>{{ 'schedule.report.success' | translate }}</th>
+          <th>{{ 'schedule.report.failed' | translate }}</th>
+          <th>{{ 'schedule.report.skipped' | translate }}</th>
+          <th>{{ 'schedule.report.successRate' | translate }}</th>
+          <th>{{ 'schedule.report.avgDuration' | translate }}</th>
+          <th>{{ 'schedule.report.lastRun' | translate }}</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let item of items">
+          <td>{{ item.name }}</td>
+          <td>{{ item.mode }}</td>
+          <td>{{ item.total_runs }}</td>
+          <td class="text-green">{{ item.success_count }}</td>
+          <td class="text-red">{{ item.failed_count }}</td>
+          <td>{{ item.skipped_count }}</td>
+          <td>{{ rate(item) }}%</td>
+          <td>{{ item.avg_duration_ms }} ms</td>
+          <td>{{ item.last_run_at ? (item.last_run_at | date:'dd/MM/yyyy HH:mm') : '-' }}</td>
+        </tr>
+        <tr *ngIf="items.length === 0">
+          <td colspan="9" class="text-center text-secondary py-4">{{ 'schedule.report.noData' | translate }}</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>

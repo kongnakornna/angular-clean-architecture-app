@@ -1,0 +1,47 @@
+<div class="page-header d-print-none mb-3">
+  <div class="row align-items-center">
+    <div class="col-auto">
+      <h2 class="page-title">{{ 'schedule.groups.title' | translate }}</h2>
+    </div>
+    <div class="col-auto ms-auto">
+      <a routerLink="/schedule/groups/create" class="btn btn-primary">
+        <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M12 5l0 14" /><path d="M5 12l14 0" /></svg>
+        {{ 'schedule.groups.create' | translate }}
+      </a>
+    </div>
+  </div>
+</div>
+
+<div class="card">
+  <div *ngIf="loading" class="text-center py-5"><div class="spinner-border text-primary"></div></div>
+  <div *ngIf="!loading" class="table-responsive">
+    <table class="table table-vcenter card-table">
+      <thead>
+        <tr>
+          <th>{{ 'schedule.groups.name' | translate }}</th>
+          <th>{{ 'schedule.groups.description' | translate }}</th>
+          <th>{{ 'schedule.groups.status' | translate }}</th>
+          <th>{{ 'schedule.groups.sortOrder' | translate }}</th>
+          <th class="w-1"></th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let item of items">
+          <td>{{ item.name }}</td>
+          <td>{{ item.description || '-' }}</td>
+          <td>{{ 'schedule.status.' + item.status | translate }}</td>
+          <td>{{ item.sort_id }}</td>
+          <td>
+            <div class="btn-list flex-nowrap">
+              <a [routerLink]="['/schedule/groups', item.id, 'edit']" class="btn btn-sm btn-warning">{{ 'schedule.groups.edit' | translate }}</a>
+              <button class="btn btn-sm btn-danger" (click)="deleteItem(item)">{{ 'schedule.groups.delete' | translate }}</button>
+            </div>
+          </td>
+        </tr>
+        <tr *ngIf="items.length === 0">
+          <td colspan="5" class="text-center text-secondary py-4">{{ 'schedule.groups.noData' | translate }}</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>

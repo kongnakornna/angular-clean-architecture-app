@@ -1,0 +1,139 @@
+{
+    "$schema": "./node_modules/@angular/cli/lib/config/schema.json",
+    "version": 1,
+    "newProjectRoot": "projects",
+    "projects": {
+        "angular-clean-architecture-serverless": {
+            "projectType": "application",
+            "schematics": {},
+            "root": "",
+            "sourceRoot": "src",
+            "prefix": "app",
+            "architect": {
+                "build": {
+                    "builder": "@angular-devkit/build-angular:browser",
+                    "options": {
+                        "outputPath": "dist/angular-clean-architecture-serverless",
+                        "index": "src/index.html",
+                        "main": "src/main.ts",
+                        "polyfills": [
+                            "zone.js"
+                        ],
+                        "tsConfig": "tsconfig.app.json",                        "assets": [
+                            "src/favicon.ico",
+                            "src/assets",
+                            {
+                                "glob": "_redirects",
+                                "input": "src",
+                                "output": "/"
+                            }
+                        ],
+                        "styles": [
+                            "src/styles.scss",
+                            "src/assets/tabler/dist/css/tabler-flags.css",
+                            "src/assets/tabler/dist/css/tabler-socials.css",
+                            "src/assets/tabler/dist/css/tabler-payments.css",
+                            "src/assets/tabler/dist/css/tabler-marketing.css"
+                        ],
+                        "scripts": [
+                            "node_modules/@tabler/core/dist/js/tabler-theme.js",
+                            "node_modules/@tabler/core/dist/js/tabler.js"
+                        ],
+                        "stylePreprocessorOptions": {
+                            "includePaths": ["src"]
+                        }
+                    },
+                    "configurations": {
+                        "production": {
+                            "fileReplacements": [
+                                {
+                                    "replace": "src/environments/environment.ts",
+                                    "with": "src/environments/environment.prod.ts"
+                                }
+                            ],
+                            "budgets": [
+                                {
+                                    "type": "initial",
+                                    "maximumWarning": "2mb",
+                                    "maximumError": "3mb"
+                                },
+                                {
+                                    "type": "anyComponentStyle",
+                                    "maximumWarning": "8kb",
+                                    "maximumError": "12kb"
+                                }
+                            ],
+                            "outputHashing": "all"
+                        },
+                        "development": {
+                            "buildOptimizer": false,
+                            "optimization": false,
+                            "vendorChunk": true,
+                            "extractLicenses": true,
+                            "sourceMap": true,
+                            "namedChunks": true
+                        }
+                    },
+                    "defaultConfiguration": "production"
+                },
+                "serve": {
+                    "builder": "@angular-devkit/build-angular:dev-server",
+                    "options": {
+                        "port": 4300,
+                        "buildTarget": "angular-clean-architecture-serverless:build:development",
+                        "proxyConfig": "proxy.conf.json"
+                    },
+                    "configurations": {
+                        "production": {
+                            "buildTarget": "angular-clean-architecture-serverless:build:production"
+                        },
+                        "development": {
+                            "buildTarget": "angular-clean-architecture-serverless:build:development"
+                        }
+                    },
+                    "defaultConfiguration": "development"
+                },
+                "extract-i18n": {
+                    "builder": "@angular-devkit/build-angular:extract-i18n",
+                    "options": {
+                        "browserTarget": "angular-clean-architecture-serverless:build"
+                    }
+                },
+                "test": {
+                    "builder": "@angular-devkit/build-angular:karma",
+                    "options": {
+                        "polyfills": [
+                            "zone.js",
+                            "zone.js/testing"
+                        ],
+                        "tsConfig": "tsconfig.spec.json",
+                        "include": [
+                            "src/app/**/*.spec.ts"
+                        ],
+                        "assets": [
+                            "src/favicon.ico",
+                            "src/assets"
+                        ],
+                        "styles": [
+                            "src/styles.scss",
+                            "src/assets/tabler/dist/css/tabler-flags.css",
+                            "src/assets/tabler/dist/css/tabler-socials.css",
+                            "src/assets/tabler/dist/css/tabler-payments.css",
+                            "src/assets/tabler/dist/css/tabler-marketing.css"
+                        ],
+                        "scripts": [
+                            "node_modules/@tabler/core/dist/js/tabler-theme.js",
+                            "node_modules/@tabler/core/dist/js/tabler.js"
+                        ],
+                        "stylePreprocessorOptions": {
+                            "includePaths": ["src"]
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "cli": {
+      "analytics": "554104f6-3964-4e21-873a-415158662ebb"
+    }
+}

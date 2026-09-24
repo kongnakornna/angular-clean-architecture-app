@@ -1,0 +1,44 @@
+<div class="page-header d-print-none mb-3">
+  <div class="row align-items-center">
+    <div class="col">
+      <h2 class="page-title">{{ 'schedule.zones.editTitle' | translate }}</h2>
+    </div>
+    <div class="col-auto ms-auto">
+      <a routerLink="/schedule/zones" class="btn btn-primary">{{ 'schedule.zones.backToList' | translate }}</a>
+    </div>
+  </div>
+</div>
+
+<div *ngIf="loading" class="text-center py-5"><div class="spinner-border text-primary"></div></div>
+<div *ngIf="notFound" class="alert alert-danger">{{ 'schedule.zones.notFound' | translate }}</div>
+
+<div *ngIf="!loading && !notFound" class="card">
+  <div class="card-body">
+    <form (ngSubmit)="onSubmit()">
+      <div class="mb-3">
+        <label class="form-label">{{ 'schedule.zones.groupName' | translate }} <span class="text-danger">*</span></label>
+        <select class="form-select" [(ngModel)]="groupId" name="groupId">
+          <option value="">{{ 'schedule.zones.selectGroup' | translate }}</option>
+          <option *ngFor="let g of groups" [value]="g.id">{{ g.name }}</option>
+        </select>
+      </div>
+      <div class="mb-3">
+        <label class="form-label">{{ 'schedule.zones.name' | translate }} <span class="text-danger">*</span></label>
+        <input type="text" class="form-control" [(ngModel)]="name" name="name" required>
+      </div>
+      <div class="mb-3">
+        <label class="form-label">{{ 'schedule.zones.description' | translate }}</label>
+        <textarea class="form-control" [(ngModel)]="description" name="description" rows="3"></textarea>
+      </div>
+      <div class="mb-3">
+        <label class="form-label">{{ 'schedule.zones.sortOrder' | translate }}</label>
+        <input type="number" class="form-control" [(ngModel)]="sortOrder" name="sortOrder">
+      </div>
+      <div class="card-footer bg-transparent mt-auto">
+        <div class="btn-list justify-content-end">
+          <button type="submit" class="btn btn-primary">{{ 'schedule.zones.update' | translate }}</button>
+        </div>
+      </div>
+    </form>
+  </div>
+</div>

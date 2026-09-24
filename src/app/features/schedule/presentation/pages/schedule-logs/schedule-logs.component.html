@@ -1,0 +1,110 @@
+<div class="page-header d-print-none mb-3">
+  <div class="row g-2 align-items-center">
+    <div class="col">
+      <h2 class="page-title">{{ 'schedule.logs.title' | translate }}</h2>
+    </div>
+  </div>
+</div>
+
+<div class="card mb-3">
+  <div class="card-body border-bottom py-3">
+    <div class="row g-2">
+      <div class="col-md-3">
+        <label class="form-label">{{ 'schedule.logs.scheduleName' | translate }}</label>
+        <select class="form-select" [(ngModel)]="scheduleFilter" (ngModelChange)="search()">
+          <option value="">{{ 'schedule.logs.allSchedules' | translate }}</option>
+          <option *ngFor="let s of schedules" [value]="s.id">{{ s.name }}</option>
+        </select>
+      </div>
+      <div class="col-md-3">
+        <label class="form-label">{{ 'schedule.list.group' | translate }}</label>
+        <select class="form-select" [(ngModel)]="groupId" (ngModelChange)="onGroupChange()">
+          <option value="">{{ 'schedule.list.all' | translate }}</option>
+          <option *ngFor="let g of groups" [value]="g.id">{{ g.name }}</option>
+        </select>
+      </div>
+      <div class="col-md-3">
+        <label class="form-label">{{ 'schedule.list.zone' | translate }}</label>
+        <select class="form-select" [(ngModel)]="zoneId" (ngModelChange)="onZoneChange()">
+          <option value="">{{ 'schedule.list.all' | translate }}</option>
+          <option *ngFor="let z of zones" [value]="z.id">{{ z.name }}</option>
+        </select>
+      </div>
+      <div class="col-md-3">
+        <label class="form-label">{{ 'schedule.list.area' | translate }}</label>
+        <select class="form-select" [(ngModel)]="areaId" (ngModelChange)="onAreaChange()">
+          <option value="">{{ 'schedule.list.all' | translate }}</option>
+          <option *ngFor="let a of areas" [value]="a.id">{{ a.name }}</option>
+        </select>
+      </div>
+      <div class="col-md-3">
+        <label class="form-label">{{ 'schedule.logs.status' | translate }}</label>
+        <select class="form-select" [(ngModel)]="statusFilter" (ngModelChange)="search()">
+          <option value="">{{ 'schedule.logs.allStatus' | translate }}</option>
+          <option value="success">{{ 'schedule.logs.success' | translate }}</option>
+          <option value="failed">{{ 'schedule.logs.failed' | translate }}</option>
+          <option value="processing">{{ 'schedule.logs.processing' | translate }}</option>
+          <option value="skipped">{{ 'schedule.logs.skipped' | translate }}</option>
+        </select>
+      </div>
+      <div class="col-md-3">
+        <label class="form-label">{{ 'schedule.logs.keyword' | translate }}</label>
+        <input type="text" class="form-control" [(ngModel)]="keyword" [placeholder]="'schedule.logs.searchPlaceholder' | translate">
+      </div>
+      <div class="col-md-3 d-flex align-items-end gap-2">
+        <button class="btn btn-primary" (click)="search()">{{ 'schedule.logs.search' | translate }}</button>
+        <button class="btn btn-outline-secondary" (click)="reset()">{{ 'schedule.logs.reset' | translate }}</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="card">
+  <div *ngIf="loading" class="text-center py-5"><div class="spinner-border text-primary"></div></div>
+  <div *ngIf="!loading" class="table-responsive">
+    <table class="table table-vcenter card-table">
+      <thead>
+        <tr>
+          <th>{{ 'schedule.logs.scheduleId' | translate }}</th>
+          <th>{{ 'schedule.logs.deviceId' | translate }}</th>
+          <th>{{ 'schedule.logs.status' | translate }}</th>
+          <th>{{ 'schedule.logs.eventAction' | translate }}</th>
+          <th>{{ 'schedule.logs.triggerSource' | translate }}</th>
+          <th>{{ 'schedule.logs.duration' | translate }}</th>
+          <th>{{ 'schedule.logs.date' | translate }}</th>
+          <th>{{ 'schedule.logs.time' | translate }}</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let item of items">
+          <td>{{ item.schedule_id }}</td>
+          <td>{{ item.device_id ?? '-' }}</td>
+          <td>
+            <span class="badge" [ngClass]="{
+              'bg-green': statusLabel(item.status) === 'success',
+              'bg-red': statusLabel(item.status) === 'failed',
+              'bg-blue': statusLabel(item.status) === 'processing',
+              'bg-orange': statusLabel(item.status) === 'skipped'
+            }">{{ 'schedule.logs.' + statusLabel(item.status) | translate }}</span>
+          </td>
+          <td>{{ item.event_action }}</td>
+          <td>{{ item.trigger_source }}</td>
+          <td>{{ item.duration_ms }} ms</td>
+          <td>{{ item.date ?? (item.executed_at | date:'dd/MM/yyyy') }}</td>
+          <td>{{ item.time ?? (item.executed_at | date:'HH:mm:ss') }}</td>
+        </tr>
+        <tr *ngIf="items.length === 0">
+          <td colspan="8" class="text-center text-secondary py-4">{{ 'schedule.logs.noData' | translate }}</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="card-footer bg-transparent d-flex justify-content-between align-items-center" *ngIf="total > 0">
+    <span class="text-secondary">{{ 'schedule.logs.showing' | translate }} {{ (page - 1) * pageSize + 1 }}-{{ page * pageSize > total ? total : page * pageSize }} {{ 'schedule.logs.of' | translate }} {{ total }}</span>
+    <div class="btn-list">
+      <button class="btn btn-sm btn-outline-secondary" (click)="prevPage()" [disabled]="page <= 1">{{ 'schedule.logs.prev' | translate }}</button>
+      <span class="mx-2">{{ page }}/{{ totalPages }}</span>
+      <button class="btn btn-sm btn-outline-secondary" (click)="nextPage()" [disabled]="page >= totalPages">{{ 'schedule.logs.next' | translate }}</button>
+    </div>
+  </div>
+</div>

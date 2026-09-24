@@ -1,0 +1,63 @@
+<div class="page-header d-print-none mb-3">
+  <div class="row align-items-center">
+    <div class="col-auto">
+      <h2 class="page-title">{{ 'schedule.areas.title' | translate }}</h2>
+    </div>
+    <div class="col-auto ms-auto">
+      <a routerLink="/schedule/areas/create" class="btn btn-primary">
+        <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M12 5l0 14" /><path d="M5 12l14 0" /></svg>
+        {{ 'schedule.areas.create' | translate }}
+      </a>
+    </div>
+  </div>
+</div>
+
+<div class="card mb-3">
+  <div class="card-body">
+    <div class="row g-2">
+      <div class="col-md-3">
+        <label class="form-label">{{ 'schedule.areas.zoneName' | translate }}</label>
+        <select class="form-select" [(ngModel)]="zoneFilter" (ngModelChange)="onFilterChange()">
+          <option value="">{{ 'schedule.areas.allZones' | translate }}</option>
+          <option *ngFor="let z of zones" [value]="z.id">{{ z.name }}</option>
+        </select>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="card">
+  <div *ngIf="loading" class="text-center py-5"><div class="spinner-border text-primary"></div></div>
+  <div *ngIf="!loading" class="table-responsive">
+    <table class="table table-vcenter card-table">
+      <thead>
+        <tr>
+          <th>{{ 'schedule.areas.groupName' | translate }}</th>
+          <th>{{ 'schedule.areas.zoneName' | translate }}</th>
+          <th>{{ 'schedule.areas.name' | translate }}</th>
+          <th>{{ 'schedule.areas.description' | translate }}</th>
+          <th>{{ 'schedule.areas.sortOrder' | translate }}</th>
+          <th class="w-1"></th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let item of items">
+          <td>{{ item.group_name }}</td>
+          <td>{{ item.zone_name }}</td>
+          <td>{{ item.name }}</td>
+          <td>{{ item.description || '-' }}</td>
+          <td>{{ item.sort_id }}</td>
+          <td>
+            <div class="btn-list flex-nowrap">
+              <a [routerLink]="['/schedule/areas', item.id, 'edit']" class="btn btn-sm btn-warning">{{ 'schedule.areas.edit' | translate }}</a>
+              <button class="btn btn-sm btn-danger" (click)="deleteItem(item)">{{ 'schedule.areas.delete' | translate }}</button>
+            </div>
+          </td>
+        </tr>
+        <tr *ngIf="items.length === 0">
+          <td colspan="6" class="text-center text-secondary py-4">{{ 'schedule.areas.noData' | translate }}</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>

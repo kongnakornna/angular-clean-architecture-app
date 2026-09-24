@@ -1,0 +1,211 @@
+<div class="page-header d-print-none mb-3">
+  <div class="row align-items-center">
+    <div class="col-auto">
+      <h2 class="page-title">   &nbsp; &nbsp;  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-tabler icons-tabler-outline icon-tabler-calendar-week">
+	<path stroke="none" d="M0 0h24v24H0z" fill="none" />
+	<path d="M4 7a2 2 0 0 1 2 -2h12a2 2 0 0 1 2 2v12a2 2 0 0 1 -2 2h-12a2 2 0 0 1 -2 -2v-12" />
+	<path d="M16 3v4" />
+	<path d="M8 3v4" />
+	<path d="M4 11h16" />
+	<path d="M7 14h.013" />
+	<path d="M10.01 14h.005" />
+	<path d="M13.01 14h.005" />
+	<path d="M16.015 14h.005" />
+	<path d="M13.015 17h.005" />
+	<path d="M7.01 17h.005" />
+	<path d="M10.01 17h.005" />
+</svg>  {{ 'settings.schedule.title' | translate }}</h2>
+    </div>
+    <div class="col-auto ms-auto">
+      <a routerLink="/settings/schedule/create" class="btn btn-primary">
+        <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M12 5l0 14" /><path d="M5 12l14 0" /></svg>
+        {{ 'settings.schedule.create' | translate }}
+      </a>
+    </div>
+  </div>
+</div>
+
+<div class="card mb-3">
+  <div class="card-body">
+    <div class="row g-3">
+      <div class="col-md-3">
+        <label class="form-label"> &nbsp;  {{ 'settings.schedule.event' | translate }}</label>
+        <select class="form-select" [(ngModel)]="eventFilter" (ngModelChange)="search()">
+          <option value="">{{ 'settings.schedule.all' | translate }} {{ 'settings.schedule.event' | translate }}</option>
+          <option value="1">{{ 'settings.schedule.eventOn' | translate }}</option>
+          <option value="0">{{ 'settings.schedule.eventOff' | translate }}</option>
+        </select>
+      </div>
+      <div class="col-md-3">
+        <label class="form-label"> &nbsp; {{ 'settings.schedule.status' | translate }}</label>
+        <select class="form-select" [(ngModel)]="statusFilter" (ngModelChange)="search()">
+          <option value="">{{ 'settings.schedule.all' | translate }} {{ 'settings.schedule.status' | translate }}</option>
+          <option value="1">{{ 'settings.schedule.active' | translate }}</option>
+          <option value="0">{{ 'settings.schedule.inactive' | translate }}</option>
+        </select>
+      </div>
+      <div class="col-md-3">
+        <label class="form-label"> &nbsp; {{ 'settings.schedule.timeFrom' | translate }}</label>
+        <input type="time" class="form-control" [(ngModel)]="timeFrom" placeholder="00:00">
+      </div>
+      <div class="col-md-3">
+        <label class="form-label"> &nbsp; {{ 'settings.schedule.timeTo' | translate }}</label>
+        <input type="time" class="form-control" [(ngModel)]="timeTo" placeholder="23:59">
+      </div>
+      <div class="col-md-3">
+        <label class="form-label"> &nbsp; {{ 'settings.schedule.keyword' | translate }}</label>
+        <input type="text" class="form-control" [(ngModel)]="searchTerm" [placeholder]="'settings.schedule.searchPlaceholder' | translate">
+      </div>
+      <div class="col-md-2 d-flex align-items-end gap-2">
+        <button class="btn btn-primary w-100" (click)="search()">{{ 'settings.schedule.search' | translate }}</button>
+        <button class="btn btn-outline-secondary w-100" (click)="reset()">{{ 'settings.schedule.reset' | translate }}</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="card">
+  <div *ngIf="loading$ | async" class="text-center py-5"><div class="spinner-border text-primary"></div></div>
+  <div *ngIf="!(loading$ | async)" class="table-responsive">
+    <table class="table table-striped table-hover table-vcenter card-table schedule-table">
+      <thead>
+        <tr>
+          <!--  <th>{{ 'settings.schedule.id' | translate }}</th> -->
+          <th class="col-name">{{ 'settings.schedule.name' | translate }}</th>
+          <th class="col-time">{{ 'settings.schedule.startTime' | translate }}</th>
+          <th class="col-event">{{ 'settings.schedule.event' | translate }}</th>
+          <th class="col-day text-center" *ngFor="let d of dayHeaders">
+            <div class="d-flex flex-column align-items-center gap-1">
+              <span>{{ d.label | translate }}</span>
+              <div class="d-flex gap-1">
+                <button class="btn btn-sm btn-outline-success" (click)="toggleAllStatus(d.key, true)" title="Check All">
+                  <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="16" height="16" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M3.5 5.5l1.5 1.5l2.5 -2.5" /><path d="M3.5 11.5l1.5 1.5l2.5 -2.5" /><path d="M3.5 17.5l1.5 1.5l2.5 -2.5" /><path d="M11 6l9 0" /><path d="M11 12l9 0" /><path d="M11 18l9 0" /></svg>
+                </button>
+                <button class="btn btn-sm btn-outline-danger" (click)="toggleAllStatus(d.key, false)" title="Uncheck All">
+                  <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="16" height="16" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M9 6l11 0" /><path d="M9 12l11 0" /><path d="M9 18l11 0" /><path d="M5 6l0 .01" /><path d="M5 12l0 .01" /><path d="M5 18l0 .01" /></svg>
+                </button>
+              </div>
+            </div>
+          </th>
+          <th class="col-status text-center">
+            <div class="d-flex flex-column align-items-center gap-1">
+              <span>{{ 'settings.schedule.status' | translate }}</span>
+              <div class="d-flex gap-1">
+                <button class="btn btn-sm btn-outline-success" (click)="toggleAllStatus('status', true)" title="Check All">
+                  <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="16" height="16" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M3.5 5.5l1.5 1.5l2.5 -2.5" /><path d="M3.5 11.5l1.5 1.5l2.5 -2.5" /><path d="M3.5 17.5l1.5 1.5l2.5 -2.5" /><path d="M11 6l9 0" /><path d="M11 12l9 0" /><path d="M11 18l9 0" /></svg>
+                </button>
+                <button class="btn btn-sm btn-outline-danger" (click)="toggleAllStatus('status', false)" title="Uncheck All">
+                  <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="16" height="16" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M9 6l11 0" /><path d="M9 12l11 0" /><path d="M9 18l11 0" /><path d="M5 6l0 .01" /><path d="M5 12l0 .01" /><path d="M5 18l0 .01" /></svg>
+                </button>
+              </div>
+            </div>
+          </th>
+          <th class="col-devices text-center">{{ 'settings.schedule.countDevice' | translate }}</th>
+          <th class="col-actions w-1"></th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let item of (filteredItems$ | async)">
+          <!-- <td>{{ item.id }}</td>-->
+          <td class="col-name fw-medium">{{ item.name }}</td>
+          <td class="col-time text-nowrap">{{ item.startTime }} </td>
+          <td class="col-event">
+            <b [class]="item.event ? 'text-success' : 'text-danger'">
+              {{ item.event ? ('settings.schedule.eventOn' | translate) : ('settings.schedule.eventOff' | translate) }}
+            </b>
+          </td>
+          <td class="col-day text-center">
+            <div class="form-check form-switch d-flex justify-content-center m-0 p-0" style="height:1.5rem">
+              <input class="form-check-input" type="checkbox" role="switch" [checked]="item.sunday"
+                (change)="toggleDayStatus(item.id, 'sunday', item.sunday)">
+            </div>
+          </td>
+          <td class="col-day text-center">
+            <div class="form-check form-switch d-flex justify-content-center m-0 p-0" style="height:1.5rem">
+              <input class="form-check-input" type="checkbox" role="switch" [checked]="item.monday"
+                (change)="toggleDayStatus(item.id, 'monday', item.monday)">
+            </div>
+          </td>
+          <td class="col-day text-center">
+            <div class="form-check form-switch d-flex justify-content-center m-0 p-0" style="height:1.5rem">
+              <input class="form-check-input" type="checkbox" role="switch" [checked]="item.tuesday"
+                (change)="toggleDayStatus(item.id, 'tuesday', item.tuesday)">
+            </div>
+          </td>
+          <td class="col-day text-center">
+            <div class="form-check form-switch d-flex justify-content-center m-0 p-0" style="height:1.5rem">
+              <input class="form-check-input" type="checkbox" role="switch" [checked]="item.wednesday"
+                (change)="toggleDayStatus(item.id, 'wednesday', item.wednesday)">
+            </div>
+          </td>
+          <td class="col-day text-center">
+            <div class="form-check form-switch d-flex justify-content-center m-0 p-0" style="height:1.5rem">
+              <input class="form-check-input" type="checkbox" role="switch" [checked]="item.thursday"
+                (change)="toggleDayStatus(item.id, 'thursday', item.thursday)">
+            </div>
+          </td>
+          <td class="col-day text-center">
+            <div class="form-check form-switch d-flex justify-content-center m-0 p-0" style="height:1.5rem">
+              <input class="form-check-input" type="checkbox" role="switch" [checked]="item.friday"
+                (change)="toggleDayStatus(item.id, 'friday', item.friday)">
+            </div>
+          </td>
+          <td class="col-day text-center">
+            <div class="form-check form-switch d-flex justify-content-center m-0 p-0" style="height:1.5rem">
+              <input class="form-check-input" type="checkbox" role="switch" [checked]="item.saturday"
+                (change)="toggleDayStatus(item.id, 'saturday', item.saturday)">
+            </div>
+          </td>
+          <td class="col-status text-center">
+            <div class="form-check form-switch d-flex justify-content-center m-0 p-0" style="height:1.5rem">
+              <input class="form-check-input" type="checkbox" role="switch" [checked]="item.status"
+                (change)="toggleStatus(item.id, item.status)">
+            </div>
+          </td>
+          <td class="col-devices text-center fw-semibold">{{ item.countDevice }}</td>
+          <td class="col-actions">
+            <div class="btn-list flex-nowrap">
+              <a [routerLink]="['/settings/schedule', item.id, 'edit']" class="btn btn-sm btn-warning me-1">{{ 'settings.schedule.edit' | translate }}</a>
+              <a [routerLink]="['/settings/schedule', item.id, 'data']" class="btn btn-sm btn-info me-1">{{ 'settings.schedule.detail' | translate }}</a>
+              <a [routerLink]="['/settings/schedule', item.id, 'device']" class="btn btn-sm btn-success me-1">{{ 'settings.schedule.device' | translate }}</a>
+              <button class="btn btn-sm btn-danger" (click)="deleteItem(item.id, item.name)">{{ 'settings.schedule.delete' | translate }}</button>
+            </div>
+          </td>
+        </tr>
+        <tr *ngIf="(filteredItems$ | async)?.length === 0">
+          <td colspan="16" class="text-center text-secondary py-4">{{ 'settings.schedule.noData' | translate }}</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="card-footer d-flex align-items-center" *ngIf="total > 0">
+    <span class="text-secondary me-3">{{ 'settings.schedule.showing' | translate }} {{ (page - 1) * pageSize + 1 }}-{{ page * pageSize > total ? total : page * pageSize }} {{ 'settings.schedule.of' | translate }} {{ total }}</span>
+    <div class="dropdown">
+      <a class="btn dropdown-toggle" data-bs-toggle="dropdown">
+        <span class="me-1">{{ pageSize }}</span>
+        <span>{{ 'settings.schedule.records' | translate }}</span>
+      </a>
+      <div class="dropdown-menu">
+        <a class="dropdown-item" [class.active]="pageSize === 10" (click)="changePageSize(10)">10 {{ 'settings.schedule.records' | translate }}</a>
+        <a class="dropdown-item" [class.active]="pageSize === 20" (click)="changePageSize(20)">20 {{ 'settings.schedule.records' | translate }}</a>
+        <a class="dropdown-item" [class.active]="pageSize === 50" (click)="changePageSize(50)">50 {{ 'settings.schedule.records' | translate }}</a>
+        <a class="dropdown-item" [class.active]="pageSize === 100" (click)="changePageSize(100)">100 {{ 'settings.schedule.records' | translate }}</a>
+      </div>
+    </div>
+    <ul class="pagination m-0 ms-auto">
+      <li class="page-item" [class.disabled]="page <= 1">
+        <a class="page-link" (click)="prevPage()" tabindex="-1" [attr.aria-disabled]="page <= 1">
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-1"><path d="M15 6l-6 6l6 6" /></svg>
+        </a>
+      </li>
+      <li class="page-item" *ngFor="let p of pages" [class.active]="p === page">
+        <a class="page-link" (click)="goToPage(p)">{{ p }}</a>
+      </li>
+      <li class="page-item" [class.disabled]="page >= totalPages">
+        <a class="page-link" (click)="nextPage()" [attr.aria-disabled]="page >= totalPages">
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-1"><path d="M9 6l6 6l-6 6" /></svg>
+        </a>
+      </li>
+    </ul>
+  </div>
+</div>

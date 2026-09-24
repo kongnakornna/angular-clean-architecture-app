@@ -1,0 +1,17 @@
+@use '@tabler/core/scss/tabler';
+@use '@tabler/core/scss/tabler-themes';
+@use 'assets/tabler/scss/custom/utilities';
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+.layout-boxed-2 {
+  --tblr-theme-boxed-width: 1600px;
+}
+
+@media (min-width: 1400px) {
+    .container-xxl, .container-xl, .container-lg, .container-md, .container-sm, .container {
+        max-width: 100%;
+    }
+}

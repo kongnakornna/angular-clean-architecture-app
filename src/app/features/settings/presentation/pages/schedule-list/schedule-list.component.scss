@@ -1,0 +1,51 @@
+.schedule-table {
+  thead th {
+    background-color: var(--tblr-bg-surface-secondary, #f6f8fb);
+    color: var(--tblr-muted-color, #626976);
+    font-weight: 600;
+    text-transform: uppercase;
+    font-size: 0.75rem;
+    letter-spacing: 0.03em;
+    white-space: nowrap;
+    vertical-align: middle;
+  }
+
+  tbody td {
+    vertical-align: middle;
+  }
+
+  .col-name {
+    min-width: 180px;
+  }
+
+  .col-time {
+    min-width: 110px;
+  }
+
+  .col-event {
+    min-width: 90px;
+  }
+
+  .col-day {
+    min-width: 84px;
+    border-left: 1px solid var(--tblr-border-color-transparent, rgba(98, 105, 118, 0.1));
+  }
+
+  .col-status {
+    min-width: 96px;
+    border-left: 1px solid var(--tblr-border-color-transparent, rgba(98, 105, 118, 0.1));
+  }
+
+  .col-devices {
+    min-width: 100px;
+  }
+
+  .col-actions {
+    min-width: 340px;
+  }
+
+  /* แยกกลุ่มคอลัมน์ด้วยเส้นแบ่งให้ชัดเจน */
+  thead .col-day + .col-day {
+    border-left: 1px solid var(--tblr-border-color-transparent, rgba(98, 105, 118, 0.1));
+  }
+}

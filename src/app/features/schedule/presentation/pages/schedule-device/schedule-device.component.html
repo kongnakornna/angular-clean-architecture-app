@@ -1,0 +1,70 @@
+<div class="page-header d-print-none mb-3">
+  <div class="row g-2 align-items-center">
+    <div class="col">
+      <h2 class="page-title">{{ 'schedule.device.title' | translate }}</h2>
+    </div>
+    <div class="col-auto ms-auto d-print-none">
+      <a routerLink="/schedule" class="btn btn-primary">{{ 'schedule.device.backToList' | translate }}</a>
+    </div>
+  </div>
+</div>
+
+<div class="card mb-3">
+  <div class="card-body border-bottom py-3">
+    <div class="row g-2">
+      <div class="col-md-3">
+        <label class="form-label">{{ 'schedule.device.scheduleName' | translate }}</label>
+        <select class="form-select" [(ngModel)]="selectedScheduleId" (ngModelChange)="onScheduleChange()">
+          <option value="">{{ 'schedule.device.allSchedules' | translate }}</option>
+          <option *ngFor="let s of schedules" [value]="s.id">{{ s.name }} ({{ s.eventAction }})</option>
+        </select>
+      </div>
+      <div class="col-md-3">
+        <label class="form-label">{{ 'schedule.device.keyword' | translate }}</label>
+        <input type="text" class="form-control" [(ngModel)]="keyword" [placeholder]="'schedule.device.searchPlaceholder' | translate">
+      </div>
+      <div class="col-md-3 d-flex align-items-end gap-2">
+        <button class="btn btn-primary" (click)="search()">{{ 'schedule.device.search' | translate }}</button>
+        <button class="btn btn-outline-secondary" (click)="reset()">{{ 'schedule.device.reset' | translate }}</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="card">
+  <div *ngIf="loading" class="text-center py-5"><div class="spinner-border text-primary"></div></div>
+  <div *ngIf="!loading" class="table-responsive">
+    <table class="table table-vcenter card-table">
+      <thead>
+        <tr>
+          <th>{{ 'schedule.device.deviceId' | translate }}</th>
+          <th>{{ 'schedule.device.deviceName' | translate }}</th>
+          <th class="text-center">{{ 'schedule.device.status' | translate }}</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let item of items">
+          <td>{{ item.device_id }}</td>
+          <td>{{ item.device_name }}</td>
+          <td class="text-center">
+            <div class="form-check form-switch d-flex justify-content-center m-0 p-0" style="height:1.5rem">
+              <input class="form-check-input" type="checkbox" role="switch"
+                [checked]="isAssigned(item)" (change)="toggleDeviceAssignment(item)">
+            </div>
+          </td>
+        </tr>
+        <tr *ngIf="items.length === 0">
+          <td colspan="3" class="text-center text-secondary py-4">{{ 'schedule.device.noData' | translate }}</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="card-footer bg-transparent d-flex justify-content-between align-items-center" *ngIf="total > 0">
+    <span class="text-secondary">{{ 'schedule.device.showing' | translate }} {{ (page - 1) * pageSize + 1 }}-{{ page * pageSize > total ? total : page * pageSize }} {{ 'schedule.device.of' | translate }} {{ total }}</span>
+    <div class="btn-list">
+      <button class="btn btn-sm btn-outline-secondary" (click)="prevPage()" [disabled]="page <= 1">{{ 'schedule.device.prev' | translate }}</button>
+      <span class="mx-2">{{ page }}/{{ totalPages }}</span>
+      <button class="btn btn-sm btn-outline-secondary" (click)="nextPage()" [disabled]="page >= totalPages">{{ 'schedule.device.next' | translate }}</button>
+    </div>
+  </div>
+</div>

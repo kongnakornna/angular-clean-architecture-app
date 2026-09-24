@@ -1,0 +1,107 @@
+<div class="page-header d-print-none mb-3">
+  <div class="row align-items-center">
+    <div class="col">
+      <h2 class="page-title">{{ 'schedule.edit.title' | translate }}</h2>
+    </div>
+    <div class="col-auto ms-auto">
+      <a routerLink="/schedule" class="btn btn-primary">{{ 'schedule.edit.backToList' | translate }}</a>
+    </div>
+  </div>
+</div>
+
+<div *ngIf="loading" class="text-center py-5"><div class="spinner-border text-primary"></div></div>
+
+<div *ngIf="notFound" class="alert alert-danger">
+  {{ 'schedule.edit.notFound' | translate }}
+</div>
+
+<div *ngIf="!loading && !notFound" class="card">
+  <div class="card-body">
+    <form (ngSubmit)="onSubmit()" #form="ngForm">
+      <div class="mb-3">
+        <label class="form-label">{{ 'schedule.edit.name' | translate }} <span class="text-danger">*</span></label>
+        <input type="text" class="form-control" name="name" [(ngModel)]="name" required>
+      </div>
+
+      <div class="row g-3 mb-3">
+        <div class="col-md-4">
+          <label class="form-label">{{ 'schedule.edit.mode' | translate }}</label>
+          <select class="form-select" name="mode" [(ngModel)]="mode">
+            <option value="weekly">{{ 'schedule.mode.weekly' | translate }}</option>
+            <option value="full">{{ 'schedule.mode.full' | translate }}</option>
+            <option value="batch">{{ 'schedule.mode.batch' | translate }}</option>
+          </select>
+        </div>
+        <div class="col-md-4">
+          <label class="form-label">{{ 'schedule.edit.timeStart' | translate }} <span class="text-danger">*</span></label>
+          <input type="time" class="form-control" name="timeStart" [(ngModel)]="timeStart" required>
+        </div>
+        <div class="col-md-4">
+          <label class="form-label">{{ 'schedule.edit.eventAction' | translate }}</label>
+          <select class="form-select" name="eventAction" [(ngModel)]="eventAction">
+            <option value="ON">{{ 'schedule.edit.eventOn' | translate }}</option>
+            <option value="OFF">{{ 'schedule.edit.eventOff' | translate }}</option>
+          </select>
+        </div>
+      </div>
+
+      <div *ngIf="mode === 'weekly'" class="mb-3">
+        <label class="form-label">{{ 'schedule.edit.daysOfWeek' | translate }} <span class="text-danger">*</span></label>
+        <div class="d-flex gap-3 flex-wrap">
+          <div class="form-check" *ngFor="let d of dayFields">
+            <input class="form-check-input" type="checkbox" [name]="d.key" [(ngModel)]="d.key" [id]="'edit-' + d.key">
+            <label class="form-check-label" [for]="'edit-' + d.key">{{ d.label | translate }}</label>
+          </div>
+        </div>
+        <small class="text-danger" *ngIf="daysTouched && !hasSelectedDay()">
+          {{ 'schedule.edit.errorDayRequired' | translate }}
+        </small>
+      </div>
+
+      <div *ngIf="mode === 'full'" class="mb-3">
+        <div class="row g-3">
+          <div class="col-md-6">
+            <label class="form-label">{{ 'schedule.edit.months' | translate }}</label>
+            <div class="d-flex gap-2 flex-wrap">
+              <div class="form-check" *ngFor="let m of [1,2,3,4,5,6,7,8,9,10,11,12]">
+                <input class="form-check-input" type="checkbox" [id]="'edit-month-' + m"
+                  [checked]="isMonthSelected(m)" (change)="onMonthToggle(m, $any($event.target).checked)">
+                <label class="form-check-label" [for]="'edit-month-' + m">{{ m }}</label>
+              </div>
+            </div>
+          </div>
+          <div class="col-md-6">
+            <label class="form-label">{{ 'schedule.edit.dates' | translate }}</label>
+            <div class="d-flex gap-2 flex-wrap">
+              <div class="form-check" *ngFor="let d of [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31]">
+                <input class="form-check-input" type="checkbox" [id]="'edit-date-' + d"
+                  [checked]="isDateSelected(d)" (change)="onDateToggle(d, $any($event.target).checked)">
+                <label class="form-check-label" [for]="'edit-date-' + d">{{ d }}</label>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div *ngIf="mode === 'batch'" class="mb-3">
+        <label class="form-label">{{ 'schedule.edit.cronExpr' | translate }} <span class="text-danger">*</span></label>
+        <input type="text" class="form-control" name="cronExpr" [(ngModel)]="cronExpr" placeholder="0 8 * * *">
+        <small class="text-secondary">{{ 'schedule.edit.cronHint' | translate }}</small>
+      </div>
+
+      <div class="mb-3">
+        <label class="form-label">{{ 'schedule.edit.status' | translate }}</label>
+        <div class="form-check form-switch">
+          <input class="form-check-input" type="checkbox" name="status" [(ngModel)]="status" id="edit-status">
+          <label class="form-check-label" for="edit-status">{{ status ? ('schedule.status.active' | translate) : ('schedule.status.inactive' | translate) }}</label>
+        </div>
+      </div>
+
+      <div class="card-footer bg-transparent mt-auto">
+        <div class="btn-list justify-content-end">
+          <button type="submit" class="btn btn-primary" (click)="daysTouched = true">{{ 'schedule.edit.update' | translate }}</button>
+        </div>
+      </div>
+    </form>
+  </div>
+</div>

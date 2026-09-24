@@ -1,0 +1,41 @@
+<div class="page-header d-print-none mb-3">
+  <div class="row align-items-center">
+    <div class="col">
+      <h2 class="page-title">{{ 'schedule.areas.createTitle' | translate }}</h2>
+    </div>
+    <div class="col-auto ms-auto">
+      <a routerLink="/schedule/areas" class="btn btn-primary">{{ 'schedule.areas.backToList' | translate }}</a>
+    </div>
+  </div>
+</div>
+
+<div class="card">
+  <div class="card-body">
+    <form (ngSubmit)="onSubmit()">
+      <div class="mb-3">
+        <label class="form-label">{{ 'schedule.areas.zoneName' | translate }} <span class="text-danger">*</span></label>
+        <select class="form-select" [(ngModel)]="zoneId" name="zoneId">
+          <option value="">{{ 'schedule.areas.selectZone' | translate }}</option>
+          <option *ngFor="let z of zones" [value]="z.id">{{ z.name }}</option>
+        </select>
+      </div>
+      <div class="mb-3">
+        <label class="form-label">{{ 'schedule.areas.name' | translate }} <span class="text-danger">*</span></label>
+        <input type="text" class="form-control" [(ngModel)]="name" name="name" required>
+      </div>
+      <div class="mb-3">
+        <label class="form-label">{{ 'schedule.areas.description' | translate }}</label>
+        <textarea class="form-control" [(ngModel)]="description" name="description" rows="3"></textarea>
+      </div>
+      <div class="mb-3">
+        <label class="form-label">{{ 'schedule.areas.sortOrder' | translate }}</label>
+        <input type="number" class="form-control" [(ngModel)]="sortOrder" name="sortOrder">
+      </div>
+      <div class="card-footer bg-transparent mt-auto">
+        <div class="btn-list justify-content-end">
+          <button type="submit" class="btn btn-primary">{{ 'schedule.areas.save' | translate }}</button>
+        </div>
+      </div>
+    </form>
+  </div>
+</div>

@@ -1,0 +1,112 @@
+<div class="page-header d-print-none">
+  <div class="row align-items-center">
+    <div class="col">
+      <h2 class="page-title">{{ 'jobCard.title' | translate }}</h2>
+      <div class="text-secondary mt-1">{{ 'jobCard.subtitle' | translate }}</div>
+    </div>
+    <div class="col-auto ms-auto d-print-none">
+      <a routerLink="/jobs/create" class="btn btn-primary">{{ 'jobCard.create' | translate }}</a>
+    </div>
+  </div>
+</div>
+<br>
+<div class="card mb-3">
+  <div class="card-body">
+    <div class="row g-3">
+      <div class="col-md-3">
+        <label class="form-label">{{ 'jobCard.search' | translate }}</label>
+        <input type="text" class="form-control" [(ngModel)]="searchTerm" [placeholder]="'jobCard.searchPlaceholder' | translate">
+      </div>
+      <div class="col-md-2">
+        <label class="form-label">{{ 'jobCard.status' | translate }}</label>
+        <select class="form-select" [(ngModel)]="statusFilter">
+          <option value="">{{ 'jobCard.all' | translate }}</option>
+          <option value="pending">{{ 'jobCard.pending' | translate }}</option>
+          <option value="assigned">{{ 'jobCard.assigned' | translate }}</option>
+          <option value="in_progress">{{ 'jobCard.inProgress' | translate }}</option>
+          <option value="completed">{{ 'jobCard.completed' | translate }}</option>
+          <option value="closed">{{ 'jobCard.closed' | translate }}</option>
+        </select>
+      </div>
+      <div class="col-md-2">
+        <label class="form-label">{{ 'jobCard.priority' | translate }}</label>
+        <select class="form-select" [(ngModel)]="priorityFilter">
+          <option value="">{{ 'jobCard.all' | translate }}</option>
+          <option value="low">{{ 'jobCard.priorityLow' | translate }}</option>
+          <option value="medium">{{ 'jobCard.priorityMedium' | translate }}</option>
+          <option value="high">{{ 'jobCard.priorityHigh' | translate }}</option>
+          <option value="urgent">{{ 'jobCard.priorityUrgent' | translate }}</option>
+        </select>
+      </div>
+      <div class="col-md-3 d-flex align-items-end">
+        <button class="btn btn-primary me-2" (click)="search()">{{ 'jobCard.search' | translate }}</button>
+        <button class="btn btn-outline-secondary" (click)="resetFilters()">{{ 'jobCard.reset' | translate }}</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="card">
+  <div *ngIf="loading$ | async" class="text-center py-5">
+    <div class="spinner-border text-primary" role="status">
+      <span class="visually-hidden">{{ 'common.loading' | translate }}</span>
+    </div>
+  </div>
+
+  <div *ngIf="!(loading$ | async)" class="table-responsive">
+    <table class="table table-vcenter card-table">
+      <thead>
+        <tr>
+          <th>{{ 'jobCard.jobNumber' | translate }}</th>
+          <th>{{ 'jobCard.customer' | translate }}</th>
+          <th>{{ 'jobCard.device' | translate }}</th>
+          <th>{{ 'jobCard.status' | translate }}</th>
+          <th>{{ 'jobCard.priority' | translate }}</th>
+          <th>{{ 'jobCard.assignee' | translate }}</th>
+          <th>{{ 'jobCard.createdDate' | translate }}</th>
+          <th class="w-1"></th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let job of (jobs$ | async)">
+          <td><a [routerLink]="['/jobs', job.id]" class="text-reset">{{ job.jobNumber }}</a></td>
+          <td>{{ job.customerName }}</td>
+          <td>{{ job.deviceType }}</td>
+          <td><span class="badge {{ getStatusColor(job.status) }}">{{ getStatusLabel(job.status) }}</span></td>
+          <td><span class="badge {{ getStatusColor(job.priority) }}">{{ getPriorityLabel(job.priority) }}</span></td>
+          <td>{{ job.assignedTo || '-' }}</td>
+          <td>{{ job.createdAt | date:'dd/MM/yyyy' }}</td>
+          <td>
+            <div class="btn-list flex-nowrap">
+              <a [routerLink]="['/jobs', job.id]" class="btn btn-sm btn-primary">{{ 'jobCard.view' | translate }}</a>
+              <a [routerLink]="['/jobs/edit', job.id]" class="btn btn-sm btn-outline-primary">{{ 'jobCard.edit' | translate }}</a>
+            </div>
+          </td>
+        </tr>
+        <tr *ngIf="(jobs$ | async)?.length === 0">
+          <td colspan="8" class="text-center text-secondary py-4">{{ 'jobCard.noData' | translate }}</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="card-footer d-flex align-items-center">
+    <p class="m-0 text-secondary">{{ 'jobCard.showingAll' | translate }} {{ total$ | async }} {{ 'jobCard.items' | translate }}</p>
+    <ul class="pagination m-0 ms-auto">
+      <li class="page-item" [class.disabled]="currentPage === 1">
+        <a class="page-link" (click)="prevPage()">‹</a>
+      </li>
+      <ng-container *ngFor="let p of pageNumbers()">
+        <li class="page-item disabled" *ngIf="p === '...'">
+          <span class="page-link">...</span>
+        </li>
+        <li class="page-item" *ngIf="p !== '...'" [class.active]="currentPage === p">
+          <a class="page-link" (click)="goToPage($any(p))">{{ p }}</a>
+        </li>
+      </ng-container>
+      <li class="page-item" [class.disabled]="currentPage === totalPages()">
+        <a class="page-link" (click)="nextPage()">›</a>
+      </li>
+    </ul>
+  </div>
+</div>

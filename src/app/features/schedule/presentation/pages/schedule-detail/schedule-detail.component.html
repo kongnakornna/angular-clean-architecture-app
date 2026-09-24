@@ -1,0 +1,109 @@
+<div class="page-header d-print-none mb-3">
+  <div class="row g-2 align-items-center">
+    <div class="col">
+      <h2 class="page-title">{{ 'schedule.detail.title' | translate }}</h2>
+    </div>
+    <div class="col-auto ms-auto">
+      <a routerLink="/schedule" class="btn btn-outline-secondary">{{ 'schedule.detail.backToList' | translate }}</a>
+      <a [routerLink]="['/schedule', id, 'edit']" class="btn btn-warning ms-2">{{ 'schedule.list.edit' | translate }}</a>
+      <a [routerLink]="['/schedule', id, 'device']" class="btn btn-success ms-2">{{ 'schedule.list.device' | translate }}</a>
+    </div>
+  </div>
+</div>
+
+<div *ngIf="loading" class="text-center py-5"><div class="spinner-border text-primary"></div></div>
+
+<div *ngIf="notFound && !loading" class="card">
+  <div class="card-body text-center text-secondary py-4">
+    {{ 'schedule.detail.notFound' | translate }}
+  </div>
+</div>
+
+<div *ngIf="item && !loading" class="row g-3">
+  <div class="col-lg-8">
+    <div class="card">
+      <div class="card-header">
+        <h3 class="card-title">{{ item.name }}</h3>
+      </div>
+      <div class="card-body">
+        <div class="datagrid">
+          <div class="datagrid-item">
+            <div class="datagrid-title">{{ 'schedule.detail.mode' | translate }}</div>
+            <div class="datagrid-content">
+              <span class="badge bg-secondary-lt">{{ 'schedule.mode.' + item.mode | translate }}</span>
+            </div>
+          </div>
+          <div class="datagrid-item">
+            <div class="datagrid-title">{{ 'schedule.detail.timeStart' | translate }}</div>
+            <div class="datagrid-content">{{ item.timeStart }}</div>
+          </div>
+          <div class="datagrid-item">
+            <div class="datagrid-title">{{ 'schedule.detail.eventAction' | translate }}</div>
+            <div class="datagrid-content">
+              <b [class]="item.eventAction === 'OFF' ? 'text-danger' : 'text-success'">
+                {{ item.eventAction === 'OFF' ? ('schedule.create.eventOff' | translate) : ('schedule.create.eventOn' | translate) }}
+              </b>
+            </div>
+          </div>
+          <div class="datagrid-item">
+            <div class="datagrid-title">{{ 'schedule.detail.status' | translate }}</div>
+            <div class="datagrid-content">
+              <span class="badge text-bg-{{ item.status ? 'success' : 'secondary' }}">
+                {{ item.status ? ('schedule.status.active' | translate) : ('schedule.status.inactive' | translate) }}
+              </span>
+            </div>
+          </div>
+          <div class="datagrid-item">
+            <div class="datagrid-title">{{ 'schedule.detail.devices' | translate }}</div>
+            <div class="datagrid-content">{{ item.deviceCount }}</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="col-lg-4">
+    <div class="card">
+      <div class="card-header">
+        <h3 class="card-title">{{ 'schedule.detail.scheduleDetails' | translate }}</h3>
+      </div>
+      <div class="card-body">
+        <ng-container *ngIf="item.mode === 'weekly' || item.mode === 'normal'">
+          <div class="datagrid">
+            <div class="datagrid-item" *ngFor="let d of dayFields">
+              <div class="datagrid-title">{{ d.label | translate }}</div>
+              <div class="datagrid-content">
+                <span *ngIf="isDayOn(d.key)" class="text-success">{{ 'schedule.detail.enabled' | translate }}</span>
+                <span *ngIf="!isDayOn(d.key)" class="text-secondary">{{ 'schedule.detail.disabled' | translate }}</span>
+              </div>
+            </div>
+          </div>
+        </ng-container>
+
+        <ng-container *ngIf="item.mode === 'full'">
+          <div class="mb-3">
+            <label class="form-label">{{ 'schedule.detail.months' | translate }}</label>
+            <div class="d-flex flex-wrap gap-1">
+              <ng-container *ngFor="let m of monthOptions">
+                <span class="badge" [ngClass]="isMonthSelected(m) ? 'bg-success' : 'bg-secondary-lt'">{{ m }}</span>
+              </ng-container>
+            </div>
+          </div>
+          <div>
+            <label class="form-label">{{ 'schedule.detail.dates' | translate }}</label>
+            <div class="d-flex flex-wrap gap-1">
+              <ng-container *ngFor="let d of dateOptions">
+                <span class="badge" [ngClass]="isDateSelected(d) ? 'bg-info' : 'bg-secondary-lt'">{{ d }}</span>
+              </ng-container>
+            </div>
+          </div>
+        </ng-container>
+
+        <ng-container *ngIf="item.mode === 'batch'">
+          <label class="form-label">{{ 'schedule.detail.cronExpr' | translate }}</label>
+          <code class="d-block p-2 rounded bg-secondary-lt">{{ item.cronExpr || '-' }}</code>
+        </ng-container>
+      </div>
+    </div>
+  </div>
+</div>
